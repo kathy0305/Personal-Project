@@ -67,3 +67,72 @@ ggplot(ByRegionSum,aes(x=Region, y=AttdByRegion))+
 ##If you want the heights of the bars to represent values in the data, 
 ##use stat="identity" and map a variable to the y aesthetic.
     
+
+## Lets see wach individual park,total attendance over the years
+ByParkSum <-dfExp %>%
+    group_by(PARK) %>%
+    summarize(AttdByPark= sum(ATTENDANCE)) %>%
+    arrange(desc(AttdByPark))
+
+## plot the top 10
+ggplot(ByParkSum[1:10,])+
+    geom_bar(aes(x= PARK, y= AttdByPark), stat="identity")
+
+## Lets try a different way
+##plot the top 10 rows
+ggplot(ByParkSum[1:10,])+
+       geom_col(aes(x=PARK, y=AttdByPark/1000000, fill= PARK))+
+        ylab("Attendance in Millions")+
+        coord_flip() 
+## its doing it again where its re-arranging the x-axis in alphabetical order
+
+##There are two types of bar charts:
+##geom_bar makes the height of the bar proportional to the number of cases
+##in each group (or if the weight aesthetic is supplied,
+##the sum of the weights). 
+
+##If you want the heights of the bars to represent values in the data,
+##use geom_col instead. geom_bar uses stat_count by default:
+##it counts the number of cases at each x position.
+##geom_col uses stat_identity: it leaves the data as is.
+
+
+
+
+## Wonder what the attendance rate over the years for each of the top 
+## 10 parks
+
+## I guess I first need to subset the original data to only include
+## the data of the top 10 parks
+TopTen <- as_vector( ByParkSum[1:10,1])
+
+## now I need to extract the info on these top ten
+## Base R
+TopTenSubset <- dfExp[dfExp$PARK %in% TopTen,]
+
+## Tidyverse using subset
+TopTenSubsetB <- subset(dfExp, PARK %in% TopTen)
+
+## Lets plot the attendance over the years
+ggplot(TopTenSubset, aes(x=year, y=ATTENDANCE, color=PARK))+
+    geom_line()
+
+
+## Lets look at a boxplot to see outliers
+ggplot(TopTenSubset, aes(x=year, y=ATTENDANCE, color=PARK))+
+    geom_boxplot()
+
+## I think an intercative plot will be more helpful
+library(plotly)
+plot_ly(TopTenSubset, y=~ATTENDANCE,color = ~PARK, type="box")
+
+
+## Multi Line Graph
+plot_ly(TopTenSubset, x=~year, y=~ATTENDANCE,color= ~PARK,type = "scatter",mode="lines+markers")
+
+## Interesting finding
+## Florida Keys Overseas Heritage Trail seems to do well 
+##and only have data from year 2011
+
+##2008 saw a peak attendance before the recession of 2008 , sharp drop in attendace in 2009
+                
