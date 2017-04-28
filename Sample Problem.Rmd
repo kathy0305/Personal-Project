@@ -1,0 +1,43 @@
+---
+title: "Example geom_bar"
+author: "Kathy0305"
+date: "April 28, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Simple example where a data frame is arranged in descending order and when trying to plot, geom bar re-arranges the x-axis by alphabet order
+
+```{r create a df, warning=FALSE,message=FALSE}
+library(tidyverse)
+##create a simple data frame
+Region <- c("SouthEast","CentralWest","SouthWest","NorthWest","CentralEast","NorthCentral","NorthEast","Central", NA)
+Attendance <- c(63448129,60835672,37126096,32870237,29031014,25861016,18620807,16083103,1729)
+SimpleDF <- data_frame(Region,Attendance)
+
+```
+
+Lets see what the df looks like
+```{r view}
+SimpleDF
+```
+
+
+
+Plot 
+
+```{r plot}
+
+ggplot(SimpleDF,aes(x=Region, y=Attendance))+
+        geom_bar(stat ="identity")
+```
+
+
+it re-arranges the order of x values  
+How do I maintain the rank/order??   
+Thanks
