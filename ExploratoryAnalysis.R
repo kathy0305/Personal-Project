@@ -48,6 +48,7 @@ ByRegionSum <-dfExp %>%
 ## Total Attendance for each region ranked
 ByRegionSum <-dfExp %>%
     group_by(Region) %>%
+    
     summarize(AttdByRegion= sum(ATTENDANCE)) %>%
     arrange(desc(AttdByRegion)) ##arrange by largest 
 
@@ -66,13 +67,27 @@ ggplot(ByRegionSum,aes(x=Region, y=AttdByRegion))+
 ##aethetic is supplied, the sum of the weights).
 ##If you want the heights of the bars to represent values in the data, 
 ##use stat="identity" and map a variable to the y aesthetic.
-    
 
-## Lets see wach individual park,total attendance over the years
+
+## According to StackOverFlow changing the Chr to Factor 
+## might do the trick to plot it in the right order
+ByRegionSum <- ByRegionSum %>%
+    mutate(Region = factor(Region, levels=unique(Region)))
+##Plot
+ggplot(ByRegionSum,aes(x=Region, y=AttdByRegion))+
+       geom_bar(stat ="identity")
+
+
+
+
+## Lets see each individual park,total attendance over the years
 ByParkSum <-dfExp %>%
     group_by(PARK) %>%
     summarize(AttdByPark= sum(ATTENDANCE)) %>%
     arrange(desc(AttdByPark))
+## change to factor
+ByParkSum <- ByParkSum %>%
+    mutate(PARK = factor(PARK, levels=unique(PARK)))
 
 ## plot the top 10
 ggplot(ByParkSum[1:10,])+
@@ -84,7 +99,6 @@ ggplot(ByParkSum[1:10,])+
        geom_col(aes(x=PARK, y=AttdByPark/1000000, fill= PARK))+
         ylab("Attendance in Millions")+
         coord_flip() 
-## its doing it again where its re-arranging the x-axis in alphabetical order
 
 ##There are two types of bar charts:
 ##geom_bar makes the height of the bar proportional to the number of cases
@@ -95,6 +109,10 @@ ggplot(ByParkSum[1:10,])+
 ##use geom_col instead. geom_bar uses stat_count by default:
 ##it counts the number of cases at each x position.
 ##geom_col uses stat_identity: it leaves the data as is.
+
+## Its not leaving data as is, its re-arranging it alphabetically
+## so I'll change the variable Region to factor
+
 
 
 
@@ -136,3 +154,10 @@ plot_ly(TopTenSubset, x=~year, y=~ATTENDANCE,color= ~PARK,type = "scatter",mode=
 
 ##2008 saw a peak attendance before the recession of 2008 , sharp drop in attendace in 2009
                 
+
+## Questions:
+# What drives attendance to FL state parks?
+# Weather, Economy, Gas Pricess ??
+
+## What makes a park better than the other? 
+# Activities? proximity to highway?
